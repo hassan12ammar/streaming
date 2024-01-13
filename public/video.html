@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Streaming</title>
+    <link href="https://unpkg.com/video.js/dist/video-js.css" rel="stylesheet">
+    <script src="https://unpkg.com/video.js/dist/video.js"></script>
+</head>
+
+<body>
+    <button onclick="sendOperation('forward')">Forward</button>
+    <button onclick="sendOperation('backward')">Backward</button>
+    <button onclick="sendOperation('stop')">Stop</button>
+
+    <video id="my-video" class="video-js" controls preload="auto" width="640" height="360" data-setup='{"fluid": true}'>
+        <source src="./videos/video_test.mp4" type="video/mp4">
+    </video>
+
+    <script>
+        const socket = new WebSocket('ws://localhost:3000');
+        let isHost = false;
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+
+            if (data.type === 'hostConnected') {
+                console.log('Host connected');
+                isHost = false;
+            } else if (data.type === 'hostDisconnected') {
+                console.log('Host disconnected');
+                isHost = false;
+            } else if (data.type === 'operation') {
+                // Perform operation based on the host's command
+                handleOperation(data.operation);
+            }
+        };
+
+        function sendOperation(operation) {
+            // Send the operation to the server
+            socket.send(JSON.stringify({
+                type: 'operation',
+                operation
+            }));
+        }
+
+        function handleOperation(operation) {
+            // Handle the received operation
+            switch (operation) {
+                case 'forward':
+                    // Implement forward logic
+                    console.log('Forward');
+                    break;
+                case 'backward':
+                    // Implement backward logic
+                    console.log('Backward');
+                    break;
+                case 'stop':
+                    // Implement stop logic
+                    console.log('Stop');
+                    break;
+                // Add more cases for additional operations as needed
+            }
+        }
+    </script>
+</body>
+
+</html>
